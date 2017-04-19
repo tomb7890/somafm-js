@@ -1,33 +1,34 @@
+const path = require('path');
+
 var assert = require('assert');
 var somaFmMaker = require('../main').somafm;
-var M3uParserMaker = require('../main').m3uparser;
-var getHtmlStream = require('../main').getHtmlStream;
-var elementOf = require('../main').elementOf;
+var findChannelWithName = require('../main').findChannelWithName;
 
-describe('Somafm', function() {
+
+describe('Somafm#channels', function() {
     // TODO: throw on bad URI?
     // a la Ruby's URI::InvalidURIError
 
-    describe('#channels()', function() {
-        var somafm = new somaFmMaker();
-        it('should find groovesalad in the channel list', function() {
-            assert(elementOf("/groovesalad/", somafm.channels) )
-        });
+    var somafm = new somaFmMaker();
 
-        it('should find secretagent in the channel list', function() {
-            assert(elementOf("/secretagent/", somafm.channels) )
-        });
+    it('should find groovesalad in the channel list', function() {
+        assert(findChannelWithName("/groovesalad/", somafm.channels) )
+    });
 
-        it('should find seven groovesalad formats ', function() {
-            // assert(elementOf("/secretagent/", somafm.channels) )
-            var p = new M3uParserMaker();
-            p.parseFile(
-                'spec/data/somafm.com/groovesalad/directstreamlinks.html');
-
-            assert.equal(p.formats.length, 7);
-        });
+    it('should find secretagent in the channel list', function() {
+        assert(findChannelWithName("/secretagent/", somafm.channels) )
     });
 
 
+    describe('formats()', function() {
+
+        it('should find seven groovesalad formats ', function() {
+            assert.equal(7, somafm.formatsForChannel('/groovesalad/').length)
+        });
+
+        it('should find six suburbsofgoa formats ', function() {
+            assert.equal(6, somafm.formatsForChannel('/suburbsofgoa/').length)
+        });
+    });
 
 });
